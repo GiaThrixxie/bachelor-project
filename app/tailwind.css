@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+    h1 {
+        @apply text-2xl;
+    }
+    h2 {
+        @apply text-xl;
+    }
+    p {
+        @apply text-base;
+        @apply text-white;
+    }
+    h3 {
+        @apply text-sm;
+        @apply text-grey-light;
+    }
+    h4 {
+        @apply text-xs;
+        @apply text-grey-light;
+    }
+}
