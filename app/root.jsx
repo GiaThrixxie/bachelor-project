@@ -55,7 +55,7 @@ export async function loader() {
 }
 
 export default function App() {
-  const { user, avatar} = useLoaderData();
+  const { user, avatar } = useLoaderData();
   const signedIn = Boolean(user);
 
   return (
@@ -64,7 +64,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-slate-50 p-0 text-slate-800">
+      <body className="bg-grey-darker p-0 text-white">
         <Header
           links={[
             { title: "Characters", url: "/characters/" },

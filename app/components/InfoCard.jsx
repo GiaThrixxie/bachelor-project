@@ -7,7 +7,7 @@ export default function InfoCard (
     subDescription,
     type,
     subType,
-    parentBackgroundColour = "bg-grey-medium" || "bg-grey-dark" || "bg-red-medium" || "other",
+    parentBackgroundColour = "bg-grey-dark" || "bg-grey-darkest" || "bg-red-medium" || "other",
     customBorderColour,
     customTopColour,
     customBottomColour,
@@ -30,19 +30,19 @@ export default function InfoCard (
     switch (parentBackgroundColour) {
         case "bg-grey-dark":
             borderColour = "border-red-medium";
-            topColour = "bg-grey-medium";
-            bottomColour = "bg-grey-darker";
+            topColour = "bg-grey-darkest";
+            bottomColour = "bg-grey-dark";
             break;
 
         case "bg-red-medium":
             borderColour = "border-grey-light";
-            topColour = "bg-grey-darker";
-            bottomColour = "bg-grey-dark";
+            topColour = "bg-grey-dark";
+            bottomColour = "bg-grey-darkest";
             break;
         default:
             borderColour = "border-red-medium";
-            topColour = "bg-grey-darker";
-            bottomColour = "bg-grey-dark";
+            topColour = "bg-grey-dark";
+            bottomColour = "bg-grey-darkest";
             break;
     }
     
@@ -66,6 +66,7 @@ export default function InfoCard (
                 }
             
             </div>
+
             <p>{title}</p>
             <div className="flex flex-row justify-center">
                 {[...Array(maxTotalDots)].map((e, index) => {

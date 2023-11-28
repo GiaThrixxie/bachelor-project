@@ -6,10 +6,13 @@ export default {
     colors: {
       'white': '#e6e6e6',
       'grey': {
-        'light': '#787878',
-        'medium': '#313131',
-        'darker': '#2C2C2C',
-        'dark': '262626',
+        'lightest': '#505050',
+        'light': '#e3e3e3',
+        'lighter': '#787878',
+        'medium': '#363636',
+        'darker': '#313131',
+        'dark': '#2C2C2C',
+        'darkest': '#262626',
       },
       'red': {
         'light': '#753535',

@@ -10,7 +10,7 @@ export default function SideBar({
     const activeClasses = "text-primary underline";
 
     return (
-        <aside className="bg-white shadow w-1/5">
+        <aside className="bg-dark w-1/5">
             <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between">
                 <nav className="flex items-center justify-between">
                     <div>

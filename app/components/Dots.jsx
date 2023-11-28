@@ -22,6 +22,8 @@ export default function Dots (
             EmptyIcon = TbHexagon;
             break;
         default:
+            FilledIcon = TbHexagonFilled;
+            EmptyIcon = TbHexagon;
             break;
     }
     
