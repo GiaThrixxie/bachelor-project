@@ -1,4 +1,4 @@
-
+import Dots from '@components';
 
 export default function InfoCard (
     title,
@@ -12,17 +12,14 @@ export default function InfoCard (
     customTopColour,
     customBottomColour,
 
-    hasDots = false,
+    hasDots = true,
     maxTotalDots = 5,
-    currentAmount = 0,
+    currentAmount = 1,
     currentTotal = 0,
     iconType = "hexagon" || "droplet",
     filledColour = "bg-red-500" || "bg-grey-light",
     emptyColour = "bg-red-500" || "bg-white",
 ) {
-    let FilledIcon;
-    let EmptyIcon;
-
     let borderColour;
     let topColour;
     let bottomColour;
@@ -45,11 +42,23 @@ export default function InfoCard (
             bottomColour = "bg-grey-darkest";
             break;
     }
+
+    switch (Array.isArray(subtitle)) {
+        case true:
+            subtitle = subtitle.join(", ");
+            break;
+        case false: 
+            break;
+        default:
+            break;
+    }
     
     return (
         <div className={"flex flex-column border-l-2 " + customBorderColour? customBorderColour : borderColour}>
             <div className={"w-full max-h-min p-2" + customTopColour? customTopColour : topColour}>
-                <h3 className="text-white">{title}</h3>
+                {hasDots === true ? 
+                    <Dots title={title} currentAmount={currentAmount} currentTotal={currentTotal} maxTotalDots={maxTotalDots} iconType={iconType} filledColour={filledColour} emptyColour={emptyColour}/>
+                 : <h3 className="text-white">{title}</h3>}
                 {subtitle && <h4>{subtitle}</h4>}
             </div>
             <div className={"w-full max-h-min p-4 flex flex-column space-y-2" + customBottomColour? customBottomColour : bottomColour}>
@@ -65,24 +74,6 @@ export default function InfoCard (
                     <h4>{type}</h4>
                 }
             
-            </div>
-
-            <p>{title}</p>
-            <div className="flex flex-row justify-center">
-                {[...Array(maxTotalDots)].map((e, index) => {
-
-                    return (
-                        <>
-                            {index < currentAmount ? 
-                            <FilledIcon key={index} size={20} className={filledColour? filledColour : "bg-white"}/>
-                            : 
-                            index < currentTotal ? 
-                            <EmptyIcon key={index} size={20} className={filledColour? filledColour : "bg-white"}/>
-                            : 
-                            <EmptyIcon key={index} size={20} className={emptyColour? emptyColour : "bg-grey-light"}/>}
-                        </>
-                    )
-                })}
             </div>
         </div>
     )

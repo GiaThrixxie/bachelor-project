@@ -1,12 +1,11 @@
-import SideBar from "./SideBar";
 
-export default function Main ({ sidebarType, children, paddingY }) {
+
+export default function Main ({ children, paddingR }) {
     return (
         <>
-            <SideBar type={sidebarType}/>
             <main
             className=
-                {`mx-auto max-w-screen-sm px-6 md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl ${paddingY && "py-6"}`}
+                {`mx-auto max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl pb-12 pt-8 ${paddingR? "px-14" : "pl-14"}`}
             >
                 {children}
             </main>

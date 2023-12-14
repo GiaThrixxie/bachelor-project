@@ -1,14 +1,32 @@
-import { TbHexagon, TbHexagonFilled, TbDroplet, TbDropletFilled } from "react-icons/tb";
+import { TbHexagon, TbHexagonFilled, TbDroplet, TbDropletFilled, TbChevronRight } from "react-icons/tb";
+import Tooltip from '@components';
+import { RadioGroup } from "@headlessui/react";
+import { useState } from "react";
 
 export default function Dots (
     maxTotalDots = 5,
     currentAmount = 0,
+    defaultValue,
     currentTotal = 0,
     iconType = "hexagon" || "droplet",
     title,
+    additionalClassNames,
+    specialties,
     filledColour = "bg-red-500" || "bg-grey-light",
-    emptyColour = "bg-red-500" || "bg-white"
+    emptyColour = "bg-red-500" || "bg-white",
+    editable = false,
+    radioGroupName,
+    pointsAvailable,
+    onChange
 ) {
+    let dotAmount;
+    const [value, setValue] = useState(defaultValue || "");
+    const handleChange = (e) => {
+      setValue(e.target.value);
+      dotAmount = e.target.value;
+      onChange(radioGroupName, dotAmount);
+    };
+
     let FilledIcon;
     let EmptyIcon;
 
@@ -28,29 +46,48 @@ export default function Dots (
     }
     
     return (
-        <div className="flex flex-column justify-center">
-            <p>{title}</p>
-            <div className="flex flex-row justify-center">
-                {[...Array(maxTotalDots)].map((e, index) => {
-
-                    return (
-                        <>
-                            {index < currentAmount ? 
+        <div className={`flex flex-column justify-center ${additionalClassNames}`}>
+            {title && <p>{title}</p>}
+            {editable===true ? 
+                <RadioGroup defaultValue={value} onChange={handleChange} name={`${radioGroupName}`} className="flex flex-row justify-center">
+                    {[...Array(maxTotalDots)].map((e, index) => (
+                        <RadioGroup.Option key={index} value={index+1} className="flex flex-row justify-center" disable={pointsAvailable[index] == 0 ? true : false}>
+                            {index < dotAmount ? 
                             <FilledIcon key={index} size={20} className={filledColour? filledColour : "bg-white"}/>
                             : 
                             index < currentTotal ? 
                             <EmptyIcon key={index} size={20} className={filledColour? filledColour : "bg-white"}/>
                             : 
-                            <EmptyIcon key={index} size={20} className={emptyColour? emptyColour : "bg-grey-light"}/>}
+                            <EmptyIcon key={index} size={20} className={emptyColour? emptyColour : "bg-grey-light"}/>
+                            }
+                        </RadioGroup.Option>
+                    ))}
+                </RadioGroup>
+                :  
+                <div className="flex flex-row justify-center">
+                    {[...Array(maxTotalDots)].map((e, index) => (
+                        <>
+                        {index < currentAmount ? 
+                        <FilledIcon key={index} size={20} className={filledColour? filledColour : "bg-white"}/>
+                        : 
+                        index < currentTotal ? 
+                        <EmptyIcon key={index} size={20} className={filledColour? filledColour : "bg-white"}/>
+                        : 
+                        <EmptyIcon key={index} size={20} className={emptyColour? emptyColour : "bg-grey-light"}/> 
+                        }
                         </>
-                    )
-                })}
-            </div>
+                    ))}
+                </div>
+                
+            }
+            {specialties &&<Tooltip contentArray={specialties} children={<><h3 className="mr-1.5">Specialties</h3><TbChevronRight className="bg-red-medium"/></>}/>}
         </div>
     )
 }
 
 /*
+
+<><h3>Specialties</h3><TbChevronRight className="bg-red-medium"/></>
     let filledIcon;
     let emptyIcon;
     let drainedIcon;

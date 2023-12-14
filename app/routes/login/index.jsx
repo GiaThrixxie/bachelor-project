@@ -1,4 +1,9 @@
 import React from "react";
+import { Input, Main } from "@components";
+import { Form, useLoaderData } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import { logInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase.js";
 
 
 export const meta = () => {
@@ -8,13 +13,71 @@ export const meta = () => {
     ];
   };
 
-export default function Login() {
+  export async function loader({ request }) {
 
-    return (
-      <div className="login">
-    </div>
+    //Check if user is signed in
+    let userId = null;
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        userId = user.uid;
+        // ...
+      } else {
+        // User is signed out
+        // ...
+      }
+    });
+    
+    return json(userId);
+  }
+
+export default function Login() {
+  const { userId } = useLoaderData();
+
+  if (userId) {
+    return <p>You are already logged in as user id {userId}</p>;
+  }
+
+  return (
+    <Main>
+      <div className="mx-auto max-w-lg">
+        <h1 className="text-center text-3xl font-bold">Login</h1>
+        <Form method="post" className="items-grow flex flex-col">
+          <Input label="Email" name="email" placeholder="Email"></Input>
+          <Input
+            label="Password"
+            type="password"
+            name="password"
+            placeholder="Password"
+          ></Input>
+          <div className="mt-4">
+            <button type="submit" title="Login"></button>
+          </div>
+        </Form>
+      </div>
+    </Main>
     );
   }
+
+  export async function action ({request}) {
+    const form = await request.formData();
+    const values = Object.fromEntries(form);
+    const { email, password} =
+      values;
+
+    logInWithEmailAndPassword(auth, email, password);
+}
+
+
+  /*.then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });*/
 
   /*import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";

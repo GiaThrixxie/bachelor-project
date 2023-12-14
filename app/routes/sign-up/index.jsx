@@ -1,23 +1,101 @@
 import React from "react";
+import { auth, registerWithEmailAndPassword } from "../../../firebase";
+import { Form, useActionData } from "@remix-run/react";
+import { Input, Main } from "@components";
+import { json, redirect } from "@remix-run/node";
+
 export const meta = () => {
     return [
-      { title: "index" },
-      { name: "description", content: "Redirecting to Campaigns" },
+      { title: "Sign-up" },
+      { name: "description", content: "Let's get you signed up to use the platform!" },
     ];
   };
 
-  export async function loader () {
-    
-  }
-
 export default function SignUp() {
+  const actionData = useActionData();
 
     return (
-      <div className="register">
-    </div>
+      <Main>
+        <Form method="post">
+            <Input
+              label="Username"
+              name="username"
+              placeholder="Username"
+              defaultValue={actionData?.values?.username}
+              errorMessage={actionData?.errors?.username?.message}
+            />
+            <Input
+              label="Email"
+              name="email"
+              placeholder="Email"
+              defaultValue={actionData?.values?.email}
+              errorMessage={actionData?.errors?.email?.message}
+            />
+            <Input
+              label="Password"
+              name="password"
+              type="password"
+              placeholder="Password"
+              defaultValue={actionData?.values?.password}
+              errorMessage={actionData?.errors?.password?.message}
+            />
+            <Input
+              label="Repeat password"
+              name="repeatPassword"
+              type="password"
+              placeholder="Repeat password"
+              defaultValue={actionData?.values?.repeatPassword}
+              errorMessage={actionData?.errors?.repeatPassword?.message}
+            />
+          <button type="submit">Sign up</button>
+        </Form>
+      </Main>
     );
   }
 
+
+  export async function action ({request}) {
+    const form = await request.formData();
+    const values = Object.fromEntries(form);
+    const { username, email, password, repeatPassword } =
+      values;
+
+    if (repeatPassword !== password) {
+      const errors = { repeatPassword: { message: "Passwords must match" } };
+      return json({ errors, values }, { status: 400 });
+    }
+    if (password.length < 6) {
+      const errors = {
+        password: { message: "Passwords must be at least 6 characters long." },
+      };
+      return json({ errors, values }, { status: 400 });
+    }
+    try {
+      registerWithEmailAndPassword(auth, username, email, password);
+
+      return redirect("/characters", {
+      });
+    } catch (error) {
+      if (
+        error.code === 11000 &&
+        error.keyPattern &&
+        error.keyPattern.email === 1
+      ) {
+        return json(
+          {
+            errors: {
+              email: {
+                message: "Email already exists. Have you tried logging in?",
+              },
+            },
+            values,
+          },
+          { status: 400 }
+        );
+      }
+      return json({ errors: error.errors, values }, { status: 400 });
+    }
+    }
   /*
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
