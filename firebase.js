@@ -14,7 +14,20 @@ import { getAuth,
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-const{firebaseConfig, firebaseURL} = process.env;
+//const{firebaseConfig, firebaseURL} = process.env;
+const {firebaseURL, apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId} = process.env;
+const firebaseConfig = {
+  apiKey: apiKey,
+  authDomain: authDomain,
+  databaseURL: firebaseURL,
+  projectId: projectId,
+  storageBucket: storageBucket,
+  messagingSenderId: messagingSenderId,
+  appId: appId
+
+};
+
+
 
 
 if (!admin.apps.length) {
