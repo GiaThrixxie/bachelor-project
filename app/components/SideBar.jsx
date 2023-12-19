@@ -1,16 +1,15 @@
 import { NavLink } from "@remix-run/react";
 import { Menu } from "@headlessui/react";
-import Image from "next/image";
 
 export default function SideBar({
     title,
     sections = [],
 }) {
-    const linkClasses = "hover:text-primary";
+    const linkClasses = "hover:text-red-medium";
     const activeClasses = "text-primary underline";
 
     return (
-        <aside className="bg-dark w-1/5">
+        <aside className="bg-dark w-1/5 h-screen">
             <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between">
                 <nav className="flex items-center justify-between">
                     <div>
@@ -63,15 +62,15 @@ export function Dropdown({ title, subSections, createNewOption }) {
                         to={subSection.url}
                         className={
                         "flex w-full items-center rounded-md px-2 py-2 text-sm overflow-hidden" +
-                        active && "bg-secondary"
+                        active && "bg-red-medium"
                         }
                     >
-                        {subSection.leftIMG && <Image src={subSection.leftIMG} width={40} height={40} alt={subSection.title} className="ml-4"/>}
+                        {subSection.leftIMG && <img src={subSection.leftIMG} width={40} height={40} alt={subSection.title} className="ml-4"/>}
                         <div className="mr-2 h-5 w-5">
                             <p>{subSection.title}</p>
                             {subSection.subTitle && <h4>{subSection.subTitle}</h4>}
                         </div>
-                        {subSection.rightIMG && <Image src={subSection.rightIMG} width={40} height={40} alt={subSection.title} className="absolute -right-2"/>}
+                        {subSection.rightIMG && <img src={subSection.rightIMG} width={40} height={40} alt={subSection.title} className="absolute -right-2"/>}
                     </NavLink>
                     )}
                 </Menu.Item>
@@ -83,7 +82,7 @@ export function Dropdown({ title, subSections, createNewOption }) {
                         to={createNewOption.url}
                         className={
                         "flex w-full items-center rounded-md px-2 py-2 text-sm" +
-                        active && "bg-secondary"
+                        active && "bg-red-medium"
                         }
                     >
                         <div className="mr-2 h-5 w-5">{createNewOption.title}</div>

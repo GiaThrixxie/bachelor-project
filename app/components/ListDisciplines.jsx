@@ -1,5 +1,5 @@
-import { Dots, Tooltip } from '@components';
-import Image from "next/image";
+import Dots from './Dots';
+import Tooltip from './Tooltip';
 import { TbChevronRight } from 'react-icons/tb';
 
 export default function ListDisciplines ({dataArray}) {
@@ -10,8 +10,8 @@ export default function ListDisciplines ({dataArray}) {
     ];
 
     let sortedData = dataArray.sort((a, b) =>
-        (disciplineOrder[a.isClanDiscipline] - disciplineOrder[b.isClanDiscipline]) ? -1 : // Sorts using the disciplineOrder array
-        (disciplineOrder[a.isClanDiscipline] === disciplineOrder[b.isClanDiscipline] ? // If both are clan-disciplines, or non-clan disciplines is the same,
+        (disciplineOrder.indexOf(a.isClanDiscipline) - disciplineOrder.indexOf(b.isClanDiscipline)) ? -1 : // Sorts using the disciplineOrder array
+        (disciplineOrder.indexOf(a.isClanDiscipline) === disciplineOrder.indexOf(b.isClanDiscipline) ? // If both are clan-disciplines, or non-clan disciplines is the same,
             (a.title > b.title ? 1 : -1) // sort alphabetically
         : 1)
     );
@@ -19,30 +19,31 @@ export default function ListDisciplines ({dataArray}) {
     return (
         <>
         {sortedData.map((discipline, index) => (
-                <div key={index} className="border-l-2 border-grey-lighter pr-2.5">
+                <div key={discipline.title+index} className="border-l-2 border-grey-lighter pr-2.5">
                     <div className="flex w-full ">
-                        <Image src={discipline.imgSrc} alt={discipline.title} width={50} height={50} className="bg-red-light pr-2.5" />
-                        <Dots title={discipline.title} currentAmount={discipline.currentDotAmount} additionalClassNames="bg-red-light" />
+                        <img src={`/img/${discipline.title}_icon.webp`} alt={discipline.title} width={50} height={50} className="bg-red-light pr-2.5" />
+                        <Dots title={discipline.title} currentAmount={discipline.dotAmount} additionalClassNames="bg-red-light" />
                     </div>
                     {discipline.powers ?  discipline.powers.map((power, index) => (
                             <Tooltip key={index} contentObject={power} children={<><h3 className="mr-1.5">{power.title}</h3><TbChevronRight className="bg-red-medium"/></>}/>
                         ))
-                    : discipline.title != "Thin-Blood Alchemy" && <p>No powers</p>}
+                    : discipline.title !== "Thin-Blood Alchemy" && <p>No powers</p>}
 
-                    {discipline.title="Blood Sorcery" && <h3>Rituals</h3>}
-                    {discipline.title ="Blood Sorcery" && discipline.rituals ?  discipline.rituals.map((ritual, index) => (
+                    {(discipline.title==="Blood Sorcery" || discipline.title==="bloodSorcery") && <h3>Rituals</h3>}
+                    {(discipline.title==="Blood Sorcery" || discipline.title==="bloodSorcery") && discipline.rituals ?  discipline.rituals.map((ritual, index) => (
                             <Tooltip key={index} contentObject={ritual} children={<><h3 className="mr-1.5">{ritual.title}</h3><TbChevronRight className="bg-red-medium"/></>}/>
                         ))
-                    : discipline.title ="Blood Sorcery" && <p>No known rituals</p>}
+                    : (discipline.title==="Blood Sorcery" || discipline.title==="bloodSorcery") && <p>No known rituals</p>}
 
-                    {discipline.title="Thin-Blood Alchemy" && <h3>Formulae</h3>}
-                    {discipline.title="Thin-Blood Alchemy" && discipline.formulae ?  discipline.formulae.map((formula, index) => (
+                    {(discipline.title==="Thin-Blood Alchemy" || discipline.title==="thinBloodAlchemy") && <h3>Formulae</h3>}
+                    {(discipline.title==="Thin-Blood Alchemy" || discipline.title==="thinBloodAlchemy") && discipline.formulae ?  discipline.formulae.map((formula, index) => (
                             <Tooltip key={index} contentObject={formula} children={<><h3 className="mr-1.5">{formula.title}</h3><TbChevronRight className="bg-red-medium"/></>}/>
                         ))
-                    : discipline.title="Thin-Blood Alchemy" && <p>No known formulae</p>}
+                    : (discipline.title==="Thin-Blood Alchemy" || discipline.title==="thinBloodAlchemy") && <p>No known formulae</p>}
                 </div>
             )
         )}
+        
         </>
     )
 }

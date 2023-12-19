@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Dots from '@components';
+import Dots from './Dots';
 
 export default function Tooltip ({contentArray, contentObject, children, position = "top"}) {
     const [isHovered, setIsHovered] = useState(false);

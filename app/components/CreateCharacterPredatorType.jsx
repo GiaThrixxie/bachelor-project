@@ -1,50 +1,34 @@
 import Section from "./Section";
-import db from "../../firebase";
-import { getDocs, collection} from "firebase/firestore";
-import { useLoaderData } from "remix";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import Tooltip from "./Tooltip";
-import Dots from "@components";
+import Dots from "./Dots";
+import { TbCalendarCancel } from "react-icons/tb";
+import InfoCard from "./InfoCard";
 
 
-export async function loader() {
-    let predatorTypes  = [];
-
-    const querySnapshot = await getDocs(collection(db, "games", "VTM_5e", "character", "predatorTypes", "data")); 
-    querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        predatorTypes.push({ id: doc.id, ...doc.data() });
-        return predatorTypes;
-      });
-
-      /*const profile = await Promise.all(querySnapshot.docs.map( async (doc) => {
-        const stuffData = doc.data()
-        stuffData.id = doc.id
-        return stuffData
-      }))*/
-  
-    return (
-      { predatorTypes }
-      )
-  };
-
-export default function CreateCharacterPredatorType ({title, actionData}) {
-    const {predatorTypes} = useLoaderData();
-    const [selectedPredatorType, setSelectedPredatorType] = useState(actionData?.values?.predatorType ? actionData?.values?.predatorType : predatorTypes[0].title);
-    const [selectedAdvantage, setSelectedAdvantage] = useState(actionData?.values?.predatorTypeAdvantage ? actionData?.values?.predatorTypeAdvantage : null);
-    const [selectedDiscipline, setSelectedDiscipline] = useState(actionData?.values?.predatorTypeDiscipline ? actionData?.values?.predatorTypeDiscipline : null);
-    const [selectedSpecialty, setSelectedSpecialty] = useState(actionData?.values?.predatorTypeSpecialty ? actionData?.values?.predatorTypeSpecialty : null);
-    const [spendBetweenAdvantages, setSpendBetweenAdvantages] = useState(actionData?.values?.predatorTypeAdditionalAdvantages  ? actionData?.values?.predatorTypeAdditionalAdvantages : null);
-    const [spendBetweenFlaws, setSpendBetweenFlaws] = useState(actionData?.values?.predatorTypeAdditionalFlaws  ? actionData?.values?.predatorTypeAdditionalFlaws : null);
+export default function CreateCharacterPredatorType ({title, loaderData, updateFields, predatorType: chosenPredatorType, clan, advantage_predatorType, discipline_predatorType}) {
+    const predatorTypes = loaderData;
+    const [selectedPredatorType, setSelectedPredatorType] = useState(chosenPredatorType !== "" ? chosenPredatorType : predatorTypes[0].title);
+    const [selectedAdvantage, setSelectedAdvantage] = useState(advantage_predatorType !== "" ? advantage_predatorType : null);
+    const [selectedDiscipline, setSelectedDiscipline] = useState(discipline_predatorType.title !== "" ? discipline_predatorType : null);
+    const [selectedSpecialty, setSelectedSpecialty] = useState(specialty_predatorType ? specialty_predatorType : null);
+    const [spendBetweenAdvantages, setSpendBetweenAdvantages] = useState(spentAdvantages_predatorType ? spentAdvantages_predatorType : null);
+    const [spendBetweenFlaws, setSpendBetweenFlaws] = useState(spentFlaws_predatorType  ? spentFlaws_predatorType : null);
     
-    let predatorType = predatorTypes.filter(predatorType => predatorType.title === selectedPredatorType);
+    let predatorType = predatorTypes.find(predatorType => predatorType.title === selectedPredatorType);
+    
+    const updateState = (e) => {
+        setSelectedPredatorType(e);
+        updateFields({predatorType: e});
+        return setSelectedPredatorType(e);
+    }
 
     return (
         <>
         <Section title={title} width="w-3/4" height="h-full" bodyClassNames="flex" backgroundColour="bg-grey-darker">
             <div className="w-1/3">
-                <RadioGroup value={selectedPredatorType} onChange={setSelectedPredatorType} name="predatorType">
+                <RadioGroup value={selectedPredatorType} onChange={updateState} name="predatorType">
                     {predatorTypes.map((predatorType) => (
                     <RadioGroup.Option key={predatorType.id} value={predatorType.title}>
                         <div className="flex">
@@ -59,20 +43,6 @@ export default function CreateCharacterPredatorType ({title, actionData}) {
                 <div className="w-2/3">
                     <div className="h-1/4">
                         <h2>{predatorType.title}</h2>
-                        {predatorType.gain.advantage.map((advantage, index) => (
-                            <Tooltip key={index} contentArray={[predatorType.gain.advantage]}>
-                                <p><span className="font-bold">Bane:</span> {predatorType.bane.title}</p>
-                            </Tooltip>
-                        ))
-
-                            }
-                        <Tooltip contentArray={[predatorType.gain.advantage]}>
-                            <p><span className="font-bold">Bane:</span> {predatorType.bane.title}</p>
-                        </Tooltip>
-                        
-                        <Tooltip contentArray={[predatorType.compulsion.description]}>
-                            <p><span className="font-bold">Compulsion:</span> {predatorType.compulsion.title}</p>
-                        </Tooltip>
                     </div>
                    <div className="bg-grey-darkest h-3/4"> 
                         <p>{predatorType.description}</p>
@@ -82,12 +52,12 @@ export default function CreateCharacterPredatorType ({title, actionData}) {
                                 <RadioGroup value={selectedAdvantage} onChange={setSelectedAdvantage} name="predatorTypeDiscipline" >
                                     <RadioGroup.Label>Advantage</RadioGroup.Label>
                                     <div className="flex">
-                                        {predatorType.gain.chooseAdvantage.map((discipline, index) => (
-                                            <RadioGroup.Option key={index} value={discipline.title} 
-                                            disabled={actionData?.values?.clan === discipline.unavailableIf ? true : (discipline.exclusiveTo && discipline.exclusiveTo !== actionData?.values.clan) ? true : false }
+                                        {predatorType.gain.chooseAdvantage.map((advantage, index) => (
+                                            <RadioGroup.Option key={index} value={advantage.title} 
+                                            disabled={clan === advantage.unavailableIf ? true : (advantage.exclusiveTo && advantage.exclusiveTo !== clan) ? true : false }
                                             className={`flex ${index > 0 && "border-l-2 border-grey-medium"}`}>
-                                                <h3>{discipline.title}</h3>
-                                                <Dots maxTotalDots={discipline.dotAmount} currentAmount={discipline.dotAmount} />
+                                                <h3>{advantage.subCategory? advantage.subCategory : advantage.category}({advantage.title})</h3>
+                                                <Dots maxTotalDots={advantage.dotAmount} currentAmount={advantage.dotAmount} />
                                             </RadioGroup.Option>
                                         ))}
                                     </div>
@@ -98,8 +68,8 @@ export default function CreateCharacterPredatorType ({title, actionData}) {
                                     <RadioGroup.Label>Discipline</RadioGroup.Label>
                                     <div className="flex">
                                         {predatorType.gain.chooseDiscipline.map((discipline, index) => (
-                                        <RadioGroup.Option key={index} value={discipline.title} 
-                                        disabled={actionData?.values?.clan === discipline.unavailableIf ? true : (discipline.exclusiveTo && discipline.exclusiveTo !== actionData?.values.clan) ? true : false }
+                                        <RadioGroup.Option key={index} value={`${discipline.title}_${discipline.dotAmount}`} 
+                                        disabled={clan === discipline.unavailableIf ? true : (discipline.exclusiveTo && discipline.exclusiveTo !== clan) ? true : false }
                                         className={`flex ${index > 0 && "border-l-2 border-grey-medium"}`}>
                                             <h3>{discipline.title}</h3>
                                             <Dots maxTotalDots={discipline.dotAmount} currentAmount={discipline.dotAmount} />
@@ -112,12 +82,12 @@ export default function CreateCharacterPredatorType ({title, actionData}) {
                                 <RadioGroup value={selectedSpecialty} onChange={setSelectedSpecialty} name="predatorTypeSpecialty">
                                     <RadioGroup.Label>Specialty</RadioGroup.Label>
                                     <div className="flex">
-                                        {predatorType.gain.chooseDiscipline.map((discipline, index) => (
-                                        <RadioGroup.Option key={index} value={discipline.title} 
-                                        disabled={actionData?.values?.clan === discipline.unavailableIf ? true : (discipline.exclusiveTo && discipline.exclusiveTo !== actionData?.values.clan) ? true : false }
+                                        {predatorType.gain.chooseSpecialty.map((specialty, index) => (
+                                        <RadioGroup.Option key={index} value={`${specialty.title}_${specialty.detail}`} 
+                                        disabled={clan === specialty.unavailableIf ? true : (specialty.exclusiveTo && specialty.exclusiveTo !== clan) ? true : false }
                                         className={`flex ${index > 0 && "border-l-2 border-grey-medium"}`}>
-                                            <h3>{discipline.title}</h3>
-                                            <Dots maxTotalDots={discipline.dotAmount} currentAmount={discipline.dotAmount} />
+                                            <h3>{specialty.title}({specialty.detail})</h3>
+                                            <Dots maxTotalDots={specialty.dotAmount} currentAmount={specialty.dotAmount} />
                                         </RadioGroup.Option>
                                         ))}
                                     </div>
@@ -129,21 +99,20 @@ export default function CreateCharacterPredatorType ({title, actionData}) {
                                         <RadioGroup value={spendBetweenAdvantages} onChange={setSpendBetweenAdvantages} name="predatorTypeAdditionalAdvantages">
                                             <RadioGroup.Label>Spend dots between the following</RadioGroup.Label>
                                             <div className="flex">
-                                                {predatorType.gain.spendBetween.filter(choice => choice.isFlaw !== true).map((choice, index) => (
+                                                {predatorType.gain.spendBetween.find(choice => choice.isFlaw !== true).map((choice, index) => (
                                                     <>
                                                     <h3>{}/{choice.dotAmount} spent between</h3>
                                                         {choice.options.map(option => (
-                                                            <RadioGroup.Option key={option} value={option.title}>
-                                                            <h3>{option.title}</h3>
-                                                            <Dots maxTotalDots={option.dotAmount} currentAmount={option.dotAmount} />
-                                                        </RadioGroup.Option>
+                                                            <RadioGroup.Option key={index} value={`${option.title}${option.dotAmount}`}>
+                                                                <Dots maxTotalDots={choice.dotAmount} editable={true} title={option.title} currentAmount={option.dotAmount} />
+                                                            </RadioGroup.Option>
                                                         ))}
                                                     </>
                                                 ))}
                                             </div>
                                         </RadioGroup>
                                     }
-                                    {predatorType.gain.spendBetween.filter(choice => choice.isFlaw !== true).length > 0 && 
+                                    {predatorType.gain.spendBetween.filter(choice => choice.isFlaw === true).length > 0 && 
                                         <RadioGroup value={spendBetweenFlaws} onChange={setSpendBetweenFlaws} name="predatorTypeAdditionalFlaws">
                                             <RadioGroup.Label>Spend dots between the following</RadioGroup.Label>
                                             <div className="flex">
@@ -152,9 +121,9 @@ export default function CreateCharacterPredatorType ({title, actionData}) {
                                                     <h3>{}/{choice.dotAmount} spent between</h3>
                                                         {choice.options.map(option => (
                                                             <RadioGroup.Option key={option} value={option.title}>
-                                                            <h3>{option.title}</h3>
-                                                            <Dots maxTotalDots={option.dotAmount} currentAmount={option.dotAmount} />
-                                                        </RadioGroup.Option>
+                                                                <h3>{option.title}</h3>
+                                                                <Dots maxTotalDots={option.dotAmount} currentAmount={option.dotAmount} />
+                                                            </RadioGroup.Option>
                                                         ))}
                                                     </>
                                                 ))}
@@ -202,3 +171,24 @@ export default function CreateCharacterPredatorType ({title, actionData}) {
     </>
     );
 }
+
+/*
+<div className="flex">
+                            {predatorType.gain &&
+                                <ul className="marker:text-red-medium">
+                                    <h3>Gain:</h3>
+                                    {predatorType.gain.bloodPotency && <li>Gain {predatorType.gain.bloodPotency} Blood Potency</li>}
+                                    {predatorType.gain.humanity && <li>Gain {predatorType.gain.humanity} Humanity</li>}
+                                    {predatorType.gain.advantage.map((advantage, index) => (
+                                        <li key={`${advantage.title + index}`}><p>Gain the {`${advantage.title? advantage.title : advantage.category}${advantage.detail ? `(${advantage.detail})` : ""} ${advantage.isFlaw === true ? "Flaw" : advantage.type} (`}</p><Dots currentAmount={advantage.dotAmount} maxTotalDots={advantage.dotAmount} /><p>{`)`}{advantage.description && `: ${advantage.description}`}</p></li>
+                                    ))}
+                                </ul>
+                            }
+                            {predatorType.lose &&
+                                <ul className="marker:text-red-medium">
+                                    <h3>Lose:</h3>
+                                    {predatorType.lose.humanity && <li>Lose {predatorType.lose.humanity} Humanity</li>}
+                                </ul>
+                            }
+                        </div>
+                        */

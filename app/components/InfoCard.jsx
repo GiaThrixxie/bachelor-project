@@ -1,12 +1,12 @@
-import Dots from '@components';
+import Dots from './Dots';
 
-export default function InfoCard (
-    title,
-    subtitle,
-    description,
-    subDescription,
-    type,
-    subType,
+export default function InfoCard ({
+    title = "",
+    subtitle = "",
+    description ="",
+    subDescription ="",
+    type = "",
+    subType ="",
     parentBackgroundColour = "bg-grey-dark" || "bg-grey-darkest" || "bg-red-medium" || "other",
     customBorderColour,
     customTopColour,
@@ -19,7 +19,7 @@ export default function InfoCard (
     iconType = "hexagon" || "droplet",
     filledColour = "bg-red-500" || "bg-grey-light",
     emptyColour = "bg-red-500" || "bg-white",
-) {
+}) {
     let borderColour;
     let topColour;
     let bottomColour;
@@ -54,23 +54,23 @@ export default function InfoCard (
     }
     
     return (
-        <div className={"flex flex-column border-l-2 " + customBorderColour? customBorderColour : borderColour}>
-            <div className={"w-full max-h-min p-2" + customTopColour? customTopColour : topColour}>
+        <div className={`flex flex-col border-l-2 ${customBorderColour? customBorderColour : borderColour}`}>
+            <div className={`w-full max-h-min p-2 ${customTopColour? customTopColour : topColour}`}>
                 {hasDots === true ? 
                     <Dots title={title} currentAmount={currentAmount} currentTotal={currentTotal} maxTotalDots={maxTotalDots} iconType={iconType} filledColour={filledColour} emptyColour={emptyColour}/>
                  : <h3 className="text-white">{title}</h3>}
                 {subtitle && <h4>{subtitle}</h4>}
             </div>
-            <div className={"w-full max-h-min p-4 flex flex-column space-y-2" + customBottomColour? customBottomColour : bottomColour}>
-                {description && <p>{description}</p>}
-                {subDescription && <h4>{subDescription}</h4>}
-                {type && subType? 
+            <div className={`w-full max-h-min p-4 flex flex-col space-y-2 ${customBottomColour? customBottomColour : bottomColour}`}>
+                {description !== "" && <p>{description}</p>}
+                {subDescription !== "" && <h4>{subDescription}</h4>}
+                {type !== "" && subType !== ""? 
                     <div className="flex flex-row justify-between">
                         <h4>{type}</h4>
                         <h4 className="text-red-light">{subType}</h4>
                     </div> 
                 : 
-                type && 
+                type !=="" && 
                     <h4>{type}</h4>
                 }
             

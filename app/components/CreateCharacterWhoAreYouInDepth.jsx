@@ -1,25 +1,15 @@
-import {Input, InfoWLabel} from "@components";
+import Input from "./Input";
 import Section from "./Section";
+import InfoWLabel from "./InfoWLabel";
 
-export default function CreateCharacterWhoAreYouInDepth ({title, actionData}) {
-    // Find all keys that start with a certain string and return the values of those keys if they are in the list of required values
-    function findbyValue(key, requiredValue) {
-        Object.keys(actionData.values).filter(function(k) {
-            return k.indexOf(key) == 0;
-        }).reduce(function(newData, k) {
-            if (requiredValue.includes(actionData.values[k])) newData[k] = actionData.values[k]
-            return newData;
-        }, {});
-    }
+export default function CreateCharacterWhoAreYouInDepth ({title, loaderData, actionData, updateFields, generation, sire, sect, chronicle, ambition, appearance, distinguishingFeatures, history}) {
+        const character = loaderData[0];
+        const attributes = loaderData[1]; 
+        const skills = loaderData[2]; 
+        const disciplines = loaderData[3]; 
+        const advantages = loaderData[4]; 
 
-    let attributes = findbyValue("attributes", [1, 2, 3, 4, 5]);
-    let skills = findbyValue("skills", [1, 2, 3, 4, 5]);
-    let specialties = findbyValue("specialty", [1, 2, 3, 4, 5]);
-    let disciplines = findbyValue("discipline", [1, 2, 3, 4, 5]);
-    let backgrounds = findbyValue("background", [1, 2, 3, 4, 5]);
-    let merits = findbyValue("merit", [1, 2, 3, 4, 5]);
 
-    //may not work for specialties nor any kind of advantages
 
     return (
         <>
@@ -30,21 +20,24 @@ export default function CreateCharacterWhoAreYouInDepth ({title, actionData}) {
                     label="Generation"
                     name="generation"
                     placeholder="Generation"
-                    defaultValue={actionData?.values?.generation}
+                    defaultValue={generation}
+                    onChange={(e) => updateFields({ generation: e.target.value })}
                     errorMessage={actionData?.errors?.generation?.message}
                 />
                 <Input
                     label="Sire"
                     name="sire"
                     placeholder="Sire"
-                    defaultValue={actionData?.values?.sire}
+                    defaultValue={sire}
+                    onChange={(e) => updateFields({ sire: e.target.value })}
                     errorMessage={actionData?.errors?.sire?.message}
                 />
                 <Input
                     label="Sect"
                     name="sect"
                     placeholder="Sect"
-                    defaultValue={actionData?.values?.sect}
+                    defaultValue={sect}
+                    onChange={(e) => updateFields({ sect: e.target.value })}
                     errorMessage={actionData?.errors?.sect?.message}
                 />
                 <hr ></hr>
@@ -53,28 +46,32 @@ export default function CreateCharacterWhoAreYouInDepth ({title, actionData}) {
                     label="Chronicle"
                     name="chronicle"
                     placeholder="Chronicle"
-                    defaultValue={actionData?.values?.chronicle}
+                    defaultValue={chronicle}
+                    onChange={(e) => updateFields({ chronicle: e.target.value })}
                     errorMessage={actionData?.errors?.chronicle?.message}
                 />
                 <Input
                     label="Ambition"
                     name="ambition"
                     placeholder="Ambition"
-                    defaultValue={actionData?.values?.ambition}
+                    defaultValue={ambition}
+                    onChange={(e) => updateFields({ ambition: e.target.value })}
                     errorMessage={actionData?.errors?.ambition?.message}
                 />
                 <Input
                     label="Appearance"
                     name="appearance"
                     placeholder="Appearance"
-                    defaultValue={actionData?.values?.appearance}
+                    defaultValue={appearance}
+                    onChange={(e) => updateFields({ appearance: e.target.value })}
                     errorMessage={actionData?.errors?.appearance?.message}
                 />
                 <Input
                     label="Distinguishing Features"
                     name="distinguishingFeatures"
                     placeholder="Distinguishing Features"
-                    defaultValue={actionData?.values?.distinguishingFeatures}
+                    defaultValue={distinguishingFeatures}
+                    onChange={(e) => updateFields({ distinguishingFeatures: e.target.value })}
                     errorMessage={actionData?.errors?.distinguishingFeatures?.message}
                 />
                 
@@ -82,51 +79,60 @@ export default function CreateCharacterWhoAreYouInDepth ({title, actionData}) {
                     label="History"
                     name="history"
                     type="textarea"
-                    defaultValue={actionData?.values?.history}
+                    defaultValue={history}
+                    onChange={(e) => updateFields({ history: e.target.value })}
                     errorMessage={actionData?.errors?.history?.message}
                 />
             </div>
             <div className="w-2/3">
                 <h2>Character Summary</h2>
-                <InfoWLabel title="Full Name" body={`${actionData?.values?.firstName} ${actionData?.values?.nickname && `'` + actionData.values.nickname + `'`} ${actionData?.values?.lastName}`} />
-                <InfoWLabel title="Date of Birth" body={`${actionData?.values?.dateOfBirth}`} />
-                <InfoWLabel title="Date of Death" body={`${actionData?.values?.dateOfDeath}`} />
-                <InfoWLabel title="Age" body={`${actionData?.values?.actualAge}, looks ${actionData?.values?.apparentAge}`} />
-                <InfoWLabel title="Clan" body={`${actionData?.values?.clan}`} />
-                <InfoWLabel title="Predator Type" body={`${actionData?.values?.predatorType}`} />
-                {
+                <InfoWLabel title="Full Name" body={`${character.firstName !== "" ? character.firstName : "N/A"} ${character.nickname !== "" && `'` + character.nickname + `'`} ${character.lastName!== "" ? character.lastName : "N/A"}`} />
+                <InfoWLabel title="Date of Birth" body={`${character.dateOfBirth!== null ? character.dateOfBirth : "N/A"}`} />
+                <InfoWLabel title="Date of Death" body={`${character.dateOfDeath!== null ? character.dateOfDeath : "N/A"}`} />
+                <InfoWLabel title="Age" body={`${character.actualAge !== null ? character.actualAge : "N/A"}, looks ${character.apparentAge !== null ? character.apparentAge : "N/A"}`} />
+                <InfoWLabel title="Clan" body={`${character.clan !== "" ? character.clan : "N/A"}`} />
+                <InfoWLabel title="Predator Type" body={`${character.predatorType !== "" ? character.predatorType : "N/A"}`} />
+                { attributes.length > 0 &&
                     attributes.map((attribute, index) => (
-                        <InfoWLabel key={index} title={attribute.title} body={attribute.value} />
+                        <InfoWLabel key={index} title={attribute.title} body={attribute.dotAmount} />
                     ))
                 }
                 {
-                    skills.map((attribute, index) => (
-                        <InfoWLabel key={index} title={attribute.title} body={attribute.value} />
+                    skills.length > 0 &&
+                    skills.map((skill, index) => (
+                        <InfoWLabel key={index} title={skill.title} body={skill.dotAmount} /> 
                     ))
                 }
                 {
-                    specialties.map((attribute, index) => (
-                        <InfoWLabel key={index} title={attribute.title} body={attribute.value} />
+                    specialties.length > 0 &&
+                    specialties.map((specialty, index) => (
+                        <InfoWLabel key={index} title={specialty.title} body={specialty.dotAmount} />
                     ))
                 }
                 {
-                    disciplines.map((attribute, index) => (
-                        <InfoWLabel key={index} title={attribute.title} body={attribute.value} />
+                    disciplines.length > 0 &&
+                    disciplines.map((discipline, index) => (
+                        <InfoWLabel key={index} title={discipline.title} body={discipline.dotAmount} />
                     ))
                 }
                 {
-                    backgrounds.map((attribute, index) => (
-                        <InfoWLabel key={index} title={attribute.title} body={attribute.value} />
+                    advantages.length > 0 &&
+                    advantages.map((advantage, index) => (
+                        <InfoWLabel key={index} title={advantage.title} body={advantage.dotAmount} />
                     ))
                 }
                 {
-                    merits.map((attribute, index) => (
-                        <InfoWLabel key={index} title={attribute.title} body={attribute.value} />
+                    backgrounds.length > 0 &&
+                    backgrounds.map((background, index) => (
+                        <InfoWLabel key={index} title={background.title} body={background.dotAmount} />
                     ))
                 }
-                
-                
-
+                {
+                    merits.length > 0 &&
+                    merits.map((merit, index) => (
+                        <InfoWLabel key={index} title={merit.title} body={merit.dotAmount} />
+                    ))
+                }
             </div>
         </Section>
         <div className="h-full w-1/4">

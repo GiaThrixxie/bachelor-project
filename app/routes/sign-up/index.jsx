@@ -1,8 +1,11 @@
 import React from "react";
-import { auth, registerWithEmailAndPassword } from "../../../firebase";
+import { signUp } from "../../../firebase";
 import { Form, useActionData } from "@remix-run/react";
-import { Input, Main } from "@components";
-import { json, redirect } from "@remix-run/node";
+import Input from "../../components/Input";
+import Main from "../../components/Main";
+import { json } from "@remix-run/node";
+import Button from "../../components/Button";
+import { createUserSession } from "../../../session.server";
 
 export const meta = () => {
     return [
@@ -16,7 +19,10 @@ export default function SignUp() {
 
     return (
       <Main>
-        <Form method="post">
+        <div className="mx-auto max-w-lg">
+        <h1 className="text-center text-3xl font-bold">Sign Up</h1>
+        <p>Note: Signing up currently does not log you in due to session and Firebase not working together as intended at the moment</p>
+        <Form method="post" className="items-grow grid grid-cols-1 gap-2">
             <Input
               label="Username"
               name="username"
@@ -47,8 +53,9 @@ export default function SignUp() {
               defaultValue={actionData?.values?.repeatPassword}
               errorMessage={actionData?.errors?.repeatPassword?.message}
             />
-          <button type="submit">Sign up</button>
+          <Button type="submit" title="Sign up" />
         </Form>
+        </div>
       </Main>
     );
   }
@@ -57,7 +64,7 @@ export default function SignUp() {
   export async function action ({request}) {
     const form = await request.formData();
     const values = Object.fromEntries(form);
-    const { username, email, password, repeatPassword } =
+    const { email, password, repeatPassword } =
       values;
 
     if (repeatPassword !== password) {
@@ -70,11 +77,13 @@ export default function SignUp() {
       };
       return json({ errors, values }, { status: 400 });
     }
+    
     try {
-      registerWithEmailAndPassword(auth, username, email, password);
+      const { user } = await signUp(email, password);
+      const token = await user.getIdToken();
 
-      return redirect("/characters", {
-      });
+      return createUserSession(token, "/characters")
+
     } catch (error) {
       if (
         error.code === 11000 &&

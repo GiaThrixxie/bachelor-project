@@ -1,8 +1,8 @@
 import { redirect } from "@remix-run/node";
-import { logout } from "../../firebase";
+import { signOut } from "../../session.server";
 
-export async function action() {
-  logout();
+export async function action({ request }) {
+  return signOut(request);
 }
 
 export function loader() {

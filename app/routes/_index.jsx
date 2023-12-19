@@ -5,11 +5,11 @@ import { redirect } from "@remix-run/node";
 export const meta = () => {
   return [
     { title: "index" },
-    { name: "description", content: "Redirecting to Campaigns" },
+    { name: "description", content: "Redirecting to Characters" },
   ];
 };
 
-export const loader = () => redirect('/campaigns/');
+export const loader = () => redirect('/characters/');
 
 /*function addData() {
   const docRef = doc(db, "/games/VTM_5e/character/disciplines/data/thinBloodAlchemy/powers/awakenTheSleeper");

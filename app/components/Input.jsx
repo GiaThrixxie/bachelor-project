@@ -1,4 +1,4 @@
-import useState from "react";
+import React, { useState } from "react";
 
 export default function Input({
     label,
@@ -26,14 +26,14 @@ export default function Input({
         {label && (
           <label
             className={
-              "first-letter:uppercase rounded-full relative text-sm w-auto group-focus-within:text-text-500 transform duration-300 z-10 font-bold h-min pl-4 " +
-              (errorMessage ? "text-alert_red-500 " : "text-secondary-500 ")
+              "first-letter:uppercase relative text-sm w-auto  group-focus-within:text-red-light text-white transform duration-300 z-10 font-bold h-min pl-4 " +
+              (errorMessage ? "text-red-light " : "text-white ")
             }
           >
             {label}
             {/* if character exceeds max limit, it will turn red*/}
             {maxLength && (
-              <span className={value?.length > maxLength ? "text-red-500" : ""}>
+              <span className={value?.length > maxLength ? "text-red-light" : ""}>
                 {value?.length} / {maxLength}
               </span>
               )}
@@ -47,8 +47,8 @@ export default function Input({
             id={name}
             placeholder={placeholder}
             defaultValue={defaultValue}
-            onChange={updateFields | handleChange}
-            className={`min-h-[4rem] w-[680px] max-w-full rounded-lg border-2 px-2 py-2 ${errorMessage && "border-red-500"}`}
+            onChange={handleChange}
+            className={`min-h-[4rem] w-[680px] max-w-full bg-grey-dark rounded-lg border-2 px-2 py-2 ${errorMessage && "border-red-medium"}`}
             {...inputProps}
           />
         ) : (
@@ -58,43 +58,12 @@ export default function Input({
             id={name}
             placeholder={placeholder}
             defaultValue={defaultValue}
-            onChange={updateFields | handleChange}
-            className={`w-full rounded-lg border-2 px-2 py-2 ${errorMessage && "border-red-500"}`}
+            onChange={handleChange}
+            className={`w-full bg-grey-dark rounded-lg border-b-2 px-2 py-2 ${errorMessage ? "border-red-light" : "border-grey-medium"}`}
             {...inputProps}
           />
         )}
-        {errorMessage && <p className="my-1 text-red-500">{errorMessage}</p>}
-
-
-        <div className="w-full flex items-center relative">
-          <input
-            type={type}
-            value={value}
-            name={name}
-            id={name}
-            placeholder={placeholder}
-            defaultValue={defaultValue}
-            className={
-              (className
-                ? className
-                : "bg-primary-200 border-2 focus:outline-none rounded-lg py-1 h-8 block w-full mb-1 ") +
-              (errorMessage
-                ? "border-alert_red-500 placeholder-alert_red-500 "
-                : "border-primary-300 focus:border-primary-600 placeholder-primary-500 ")
-            }
-            placeholder={errorMessage ? errorMessage : placeholder && placeholder}
-            onChange={updateFields | onChange}
-          ></input>
-          {required === true && (
-            <TbAsterisk
-              size={16}
-              className={
-                "absolute right-4 top-2 " +
-                (errorMessage ? "stroke-alert_red-500" : "stroke-primary-500")
-              }
-            />
-          )}
-        </div>
+        {errorMessage && <p className="my-1 text-red-light">{errorMessage}</p>}
       </div>
     );
   }

@@ -1,7 +1,7 @@
 import React from 'react';
-import Dots from '@components';
+import Dots from "./Dots";
 
-export default function ListCoreTraits ({dataArray, pointsAvailable, onChange, editable, attributesOrSkills, category, allCategories = false, topBorder = false, actionData }) {
+export default function ListCoreTraits ({dataArray, pointsAvailable, onChange, editable, attributesOrSkills, category, allCategories = false, topBorder = false, actionData, filledColour, emptyColour }) {
     let filteredData;
 
     let borderClasses;
@@ -30,17 +30,17 @@ export default function ListCoreTraits ({dataArray, pointsAvailable, onChange, e
         case "attributes":
             if (allCategories === true) {
                 filteredData = dataArray.sort((a, b) =>
-                attributesOrder[a.title] - attributesOrder[b.title]);// Sorts using the attributesOrder array
+                attributesOrder.indexOf(a.title) - attributesOrder.indexOf(b.title));// Sorts using the attributesOrder array
             } else {
             filteredData = dataArray.filter(data => data.category === `${category}`).sort((a, b) =>
-            attributesOrder[a.title] - attributesOrder[b.title]); // Sorts using the attributesOrder array
+            attributesOrder.indexOf(a.title) - attributesOrder.indexOf(b.title)); // Sorts using the attributesOrder array
             }
             break;
         case "skills":
             if (allCategories === true) {
                 filteredData = dataArray.sort((a, b) =>
-                    (typeOrder[a.category] - typeOrder[b.category]) ? -1 : // Sorts using the typeOrder array
-                    (typeOrder[a.category] === typeOrder[b.category] ? // If the category is the same,
+                    (typeOrder.indexOf(a.category) - typeOrder.indexOf(b.category)) ? -1 : // Sorts using the typeOrder array
+                    (typeOrder.indexOf(a.category) === typeOrder.indexOf(b.category) ? // If the category is the same,
                         (a.title > b.title ? 1 : -1) // sort alphabetically
                     : 1)
                 );
@@ -52,8 +52,8 @@ export default function ListCoreTraits ({dataArray, pointsAvailable, onChange, e
         default:
             if (allCategories === true) {
                 filteredData = dataArray.sort((a, b) =>
-                    (typeOrder[a.category] - typeOrder[b.category]) ? -1 : // Sorts using the typeOrder array
-                    (typeOrder[a.category] === typeOrder[b.category] ? // If the category is the same,
+                    (typeOrder.indexOf(a.category) - typeOrder.indexOf(b.category)) ? -1 : // Sorts using the typeOrder array
+                    (typeOrder.indexOf(a.category) === typeOrder.indexOf(b.category) ? // If the category is the same,
                         (a.title > b.title ? 1 : -1) // sort alphabetically
                     : 1)
                 );
@@ -71,10 +71,20 @@ export default function ListCoreTraits ({dataArray, pointsAvailable, onChange, e
             let defaultValue = actionData?.values?.[preDefaultValue];
             
             switch (index) {
-                // First row
+                // First row, first item never gets a topBorder
                 case 0:
+                    additionalClasses = "";
+                    break;
+
+                // First row continues, second and third item get a topBorder if topBorder is true and attributesOrSkills is "attributes" 
                 case 3:
                 case 6:
+                    borderColour = (attributesOrSkills === "attributes") ? "border-red-dark" : "border-grey-darkest";
+                    borderClasses = (topBorder === true && attributesOrSkills === "attributes") ? `border-t-2 ${borderColour}` : "";
+                    additionalClasses = (attributesOrSkills === "attributes") ? "pt-7" : "";
+                    break;
+
+                //First row continued, these always get a border if topBorder is true
                 case 9:
                 case 12:
                 case 15:
@@ -82,8 +92,8 @@ export default function ListCoreTraits ({dataArray, pointsAvailable, onChange, e
                 case 21:
                 case 24:
                     borderColour = (attributesOrSkills === "attributes") ? "border-red-dark" : "border-grey-darkest";
-                    borderClasses = (topBorder === true) ? `border-b-2 ${borderColour}` : "";
-                    additionalClasses = "mt-7";
+                    borderClasses = (topBorder === true) ? `border-t-2 ${borderColour}` : "";
+                    additionalClasses = "";
                     break;
         
                 // Second row
@@ -96,6 +106,9 @@ export default function ListCoreTraits ({dataArray, pointsAvailable, onChange, e
                 case 19:
                 case 22:
                 case 25:
+                    borderColour = "";
+                    borderClasses = "";
+                    additionalClasses = "";
                     break;
         
                 // Third row
@@ -108,15 +121,16 @@ export default function ListCoreTraits ({dataArray, pointsAvailable, onChange, e
                 case 20:
                 case 23:
                 case 26:
-                    borderColour = (attributesOrSkills === "attributes") ? "border-red-dark" : "border-grey-darkest";
-                    borderClasses = (topBorder === true) ? `border-b-2 ${borderColour}` : "";
+                    borderColour = "";
+                    borderClasses = "";
+                    additionalClasses = "";
                     break;
                 default:
                     break;
             }
             return (
                 <>
-                <Dots key={index} title={data.title} onChange={onChange} pointsAvailable={pointsAvailable} defaultValue={defaultValue} radioGroupName={editable===true && `${attributesOrSkills}_${data.title}`} editable={editable} currentAmount={data.currentDotAmount} additionalClassNames={`${borderClasses} ${data.specialties.length > 0 ? "" : "mb-7"} ${additionalClasses}`} specialties={data.specialties}/>
+                <Dots key={data.title} title={data.title} onChange={onChange} pointsAvailable={pointsAvailable} defaultValue={defaultValue} radioGroupName={editable===true && `${attributesOrSkills}_${data.title}`} editable={editable} currentAmount={data.dotAmount} filledColour={filledColour} emptyColour={emptyColour} additionalClassNames={`${borderClasses} ${data.specialties === undefined ? "pb-7" : data.specialties?.length > 0 && ""} ${additionalClasses}`} specialties={data.specialties !== undefined ? data.specialties : null}/>
             </>
             )
         })}
@@ -125,6 +139,8 @@ export default function ListCoreTraits ({dataArray, pointsAvailable, onChange, e
 }
 
 /*
+                attributesOrder[a.title] - attributesOrder[b.title]);// Sorts using the attributesOrder array
+
 switch (attributesOrSkills) {
         case "attributes":
             if (allCategories === true) {

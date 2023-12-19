@@ -1,21 +1,23 @@
-import {ListCoreTraits, ListDisciplines, Section} from '@/components';
+import ListCoreTraits from './ListCoreTraits';
+import ListDisciplines from './ListDisciplines';
+import Section from './Section';
 
 export default function CoreTraits (characterData) {
-
-
     return (
         <>
-        <div className="w-3/4 mr-4">
-            <Section title="Attributes" height="h-full" width="w-1/4" backgroundColour="bg-red-medium" bodyClassNames="grid grid-cols-1 grid-rows-9">
-                <ListCoreTraits dataArray={characterData.attributes} attributesOrSkills="attributes" allCategories={true} topBorder={true} />
-            </Section>
-            <Section title="Skills" height="h-full" width="w-3/4" backgroundColour="bg-grey-darker" bodyClassNames="grid grid-cols-3 grid-rows-9">
-                <ListCoreTraits dataArray={characterData.skills} attributesOrSkills="skills" allCategories={true} topBorder={true} />
-            </Section>
-        </div>
-        <Section title="Disciplines" height="h-full" width="w-1/4" backgroundColour="bg-grey-darkest">
-            <ListDisciplines dataArray={characterData.disciplines} />
-        </Section>
+            <div className="flex w-full h-full">
+                <div className="w-3/4 mr-4 flex">
+                    <Section title="Attributes" height="h-full" width="w-1/4" backgroundColour="bg-red-medium" bodyClassNames="grid grid-cols-1 grid-rows-9">
+                        <ListCoreTraits dataArray={characterData.attributes} attributesOrSkills="attributes" filledColour="stroke-grey-light" emptyColour="stroke-white" allCategories={true} topBorder={true} />
+                    </Section>
+                    <Section title="Skills" height="h-full" width="w-3/4" backgroundColour="bg-grey-darker" bodyClassNames="grid grid-cols-3 grid-rows-9">
+                        <ListCoreTraits dataArray={characterData.skills} attributesOrSkills="skills" allCategories={true} topBorder={true} />
+                    </Section>
+                </div>
+                <Section title="Disciplines" height="h-full" width="w-1/4" backgroundColour="bg-grey-darkest">
+                    <ListDisciplines dataArray={characterData.disciplines} />
+                </Section>
+            </div>
         </>
     )
 }

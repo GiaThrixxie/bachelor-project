@@ -9,8 +9,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import Header from "./components/Header";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase.js";
+import { getUserSession } from "../session.server";
 
 import styles from "./tailwind.css";
 
@@ -31,26 +30,22 @@ export const meta = () => {
 
 export const links = () => [{ rel: "stylesheet", href: styles }];
 
-export async function loader() {
-  let userID;
+export async function loader({ request }) {
+  let userId;
   let avatar;
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/firebase.User
-      userID = user.uid;
-      avatar = user.photoURL;
-      // ...
-    } else {
-      // User is signed out
-      // ...
-    }
-  });
+  const sessionUser = await getUserSession(request);
+  if (!sessionUser) {
+    //return redirect("/characters");
+    
+  } else {
+    userId = sessionUser.uid;
+    avatar = sessionUser.photoURL;
+  }
 
   return json({
-    user: userID || null,
-    avatar: avatar,
+    user: userId || null,
+    avatar: avatar || "/img/placeholder_avatar.png",
   });
 }
 
@@ -64,7 +59,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-grey-darker p-0 text-white">
+      <body className="bg-grey-darker p-0 text-white max-h-screen max-w-screen w-screen h-screen">
         <Header
           links={[
             { title: "Characters", url: "/characters/" },

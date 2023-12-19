@@ -1,9 +1,11 @@
 import React from "react";
-import { Input, Main } from "@components";
-import { Form, useLoaderData } from "@remix-run/react";
-import { json } from "@remix-run/node";
-import { logInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase.js";
+import Input from "../../components/Input.jsx";
+import Main from "../../components/Main.jsx";
+import Button from "../../components/Button.jsx";
+import { Form } from "@remix-run/react";
+import { redirect } from "@remix-run/node";
+import { signIn } from "../../../firebase.js";
+import { createUserSession, getUserSession } from "../../../session.server.js";
 
 
 export const meta = () => {
@@ -12,37 +14,23 @@ export const meta = () => {
       { name: "description", content: "Redirecting to Campaigns" },
     ];
   };
-
-  export async function loader({ request }) {
-
-    //Check if user is signed in
-    let userId = null;
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in
-        userId = user.uid;
-        // ...
-      } else {
-        // User is signed out
-        // ...
-      }
-    });
-    
-    return json(userId);
-  }
+  export async function loader({request}) {
+    const sessionUser = await getUserSession(request);
+    if (sessionUser) {
+      return redirect("/characters");
+    }
+    else return null;
+  };
+  
 
 export default function Login() {
-  const { userId } = useLoaderData();
-
-  if (userId) {
-    return <p>You are already logged in as user id {userId}</p>;
-  }
 
   return (
     <Main>
       <div className="mx-auto max-w-lg">
         <h1 className="text-center text-3xl font-bold">Login</h1>
-        <Form method="post" className="items-grow flex flex-col">
+        <p>Note: Logging in currently does nothing due to session and Firebase not working together as intended at the moment</p>
+        <Form method="post" className="items-grow grid grid-cols-1 gap-2">
           <Input label="Email" name="email" placeholder="Email"></Input>
           <Input
             label="Password"
@@ -51,7 +39,7 @@ export default function Login() {
             placeholder="Password"
           ></Input>
           <div className="mt-4">
-            <button type="submit" title="Login"></button>
+            <Button type="submit" title="Login"></Button>
           </div>
         </Form>
       </div>
@@ -62,10 +50,13 @@ export default function Login() {
   export async function action ({request}) {
     const form = await request.formData();
     const values = Object.fromEntries(form);
-    const { email, password} =
+    const { email, password } =
       values;
-
-    logInWithEmailAndPassword(auth, email, password);
+    
+    const {user} = await signIn(email, password);
+    const token = await user.getIdToken();
+    console.log(email, password);
+    return createUserSession(token, "/characters");
 }
 
 

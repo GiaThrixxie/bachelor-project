@@ -7,15 +7,15 @@ export default function Header({
     avatar,
     signedIn = false,
 }) {
-    const linkClasses = "hover:text-primary";
-    const activeClasses = "text-primary underline";
+    const linkClasses = "hover:text-red-medium";
+    const activeClasses = "text-red-medium underline";
 
     return (
-        <header className="bg-grey-medium w-full py-4 px-4 text-white">
-            <nav className="flex justify-between">
+        <header className="bg-grey-medium w-full max-w-screen text-white p-2">
+            <nav className="flex justify-between items-center">
               <div>
                   <NavLink to="/" className={({isActive}) => isActive && linkClasses}> {/* If the current route is active, add the active classes, else add nothing */}
-                      <span className="block text-lg font-bold">Home</span>
+                      <span className="block text-lg font-bold px-4">Home</span>
                   </NavLink>
               </div>
               <div>
@@ -25,8 +25,8 @@ export default function Header({
                               <NavLink
                               key={index}
                               to={link.url}
-                              className={({ isActive }) =>
-                                  linkClasses + isActive && activeClasses + link.url === ("/login/" || "/sign-up/") && "bg-red-medium"
+                              className={`${({ isActive }) =>
+                                  linkClasses + isActive && activeClasses} ${(link.url === "/login/" || link.url === "/sign-up/") && "bg-red-medium text-white hover:text-white hover:bg-red-light h-full py-2 px-4 rounded-xl"}`
                               }
                               >
                                   {link.title}
@@ -50,13 +50,13 @@ export function Dropdown({ avatar }) {
               src={
                 avatar
                   ? avatar
-                  : "/img/placeholderUser.png"
+                  : "/img/placeholder_character_small.jpg"
               }
               alt="Avatar"
             />
           </Menu.Button>
         </div>
-          <Menu.Items className="absolute right-0 z-50 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute right-0 z-50 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-grey-lighter">
             <div className="px-1 py-1 ">
                 <Menu.Item>
                   {({ active }) => (
@@ -64,7 +64,7 @@ export function Dropdown({ avatar }) {
                       to="/my-profile/"
                       className={
                         "flex w-full items-center rounded-md px-2 py-2 text-sm" +
-                        active && "bg-secondary"
+                        active && "bg-red-medium"
                       }
                     >
                       <div className="mr-2 h-5 w-5"><TbUser size={20} /></div>
@@ -80,7 +80,7 @@ export function Dropdown({ avatar }) {
                     <button
                       className={
                         "flex w-full items-center rounded-md px-2 py-2 text-sm" +
-                        active && "bg-secondary"
+                        active && "bg-red-medium"
                       }
                     >
                       <div className="mr-2 h-5 w-5">
