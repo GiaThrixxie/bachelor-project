@@ -10,12 +10,13 @@ import { getAuth,
     createUserWithEmailAndPassword,
     signOut,
  } from "firebase/auth";
-
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 //const{firebaseConfig, firebaseURL} = process.env;
 const {firebaseURL, apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId} = process.env;
+
+const serviceAccount = require('./GOOGLE_APPLICATION_CREDENTIALS');
 const firebaseConfig = {
   apiKey: apiKey,
   authDomain: authDomain,
@@ -24,7 +25,6 @@ const firebaseConfig = {
   storageBucket: storageBucket,
   messagingSenderId: messagingSenderId,
   appId: appId
-
 };
 
 
@@ -32,7 +32,7 @@ const firebaseConfig = {
 
 if (!admin.apps.length) {
   initializeAdminApp({
-    credential: applicationDefault(),
+    credential: admin.credential.cert(serviceAccount),
     databaseURL: firebaseURL,
   })
 }
