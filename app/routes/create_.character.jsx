@@ -839,7 +839,30 @@ export default function CreateCharacter() {
         return redirect(`/characters/${docRef.id}`);
       })
       .catch((error) => {
-          console.error("Error creating character: ", error);
+          console.error("Could not edit character: ", error);
+      });
+
+      //Example of an update function
+      let characterRef = db.collection("characters").doc(characterId);
+
+      //let characterUpdates = {
+        firstName: "Peaches" //Updates the firstName field to Peaches
+      }
+
+      //return characterRef.update(characterUpdates)
+      .then(() => {
+          console.log("Document successfully updated!");
+      })
+      .catch((error) => {
+          // The document probably doesn't exist.
+          console.error("Error updating document: ", error);
+      });
+
+      // Example of a delete function
+      //db.collection("characters").doc(characterId).delete().then(() => {
+          return redirect(`/characters/`);
+      }).catch((error) => {
+          console.error("Could not delete character: ", error);
       });
 
     }
